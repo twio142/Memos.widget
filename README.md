@@ -3,6 +3,8 @@
 This widget was migrated from the web app [Manifest](https://github.com/jonathontoon/manifest).
 It allows you to keep memos on your desktop.
 
+![](./screenshot.png)
+
 ## Dependencies
 
 This project requires `Node.js` to be installed on your machine.
@@ -51,7 +53,7 @@ A new memo will appear on a random position on the screen.
 
 ## Credits
 
-This project is a a Übersicht widget that was adapted from the web application [Manifest](https://github.com/jonathontoon/manifest).
+This project is a Übersicht widget that was adapted from the web application [Manifest](https://github.com/jonathontoon/manifest).
 Most parts of its UI were derived from the original project.
 I'd like to thank the creator(s) of Manifest for making their work available under the GNU
 License.

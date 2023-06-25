@@ -160,7 +160,7 @@ const keydownEvent = (e) => {
         e.target.blur();
     } else if (e.key === 'n' && e.metaKey) {
         e.preventDefault();
-        run('"${node}" Memos.widget/lib/actions.js new');
+        run(`"${node}" Memos.widget/lib/actions.js new`);
     } else if (e.key === 'w' && e.metaKey) {
         e.preventDefault();
         closeEvent({target: e.target.parentNode.querySelectorAll('.close')[0]});

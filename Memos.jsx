@@ -8,7 +8,7 @@ const dataFile = "./Memos.widget/lib/data.json";
 export const init = () => {
     run(`
     sed -i '' 's/_SCREEN_SIZE_/${window.screen.availWidth}, ${window.screen.availHeight}/' Memos.widget/lib/actions.js;
-    [ -f ${dataFile} ] || env mode=init "${node}" Memos.widget/lib/actions.js
+    [ -f ${dataFile} ] || "${node}" Memos.widget/lib/actions.js init
     `);
 }
 export const command = `cat ${dataFile}`;
@@ -160,7 +160,7 @@ const keydownEvent = (e) => {
         e.target.blur();
     } else if (e.key === 'n' && e.metaKey) {
         e.preventDefault();
-        run('env mode=new "${node}" Memos.widget/lib/actions.js');
+        run('"${node}" Memos.widget/lib/actions.js new');
     } else if (e.key === 'w' && e.metaKey) {
         e.preventDefault();
         closeEvent({target: e.target.parentNode.querySelectorAll('.close')[0]});

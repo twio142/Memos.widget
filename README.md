@@ -5,23 +5,9 @@ It allows you to keep memos on your desktop.
 
 ![](./screenshot.png)
 
-## Dependencies
-
-This project requires `Node.js` to be installed on your machine.
-If you haven't already:
-
-```bash
-brew install node
-```
-
-After `Node.js` is installed, enter the path to its executable in the `Memos.widget/Memos.jsx` file.
-The path to `Node.js` can be acquired by:
-
-```bash
-command -v node
-```
-
 ## Features
+
+Each memo can be edited in place, dragged around or resized.
 
 The `Memos.widget/lib/actions.js` file allows you to create, edit or delete your memos.
 
@@ -50,6 +36,22 @@ Alternatively, while any existing memo has focus, you can use hotkeys to control
 | Delete a memo     | ⌘W     |
 
 A new memo will appear on a random position on the screen.
+
+## Dependencies
+
+This project requires `Node.js` to be installed on your machine.
+If you haven't already:
+
+```bash
+brew install node
+```
+
+After `Node.js` is installed, **enter the path to its executable in the `Memos.widget/Memos.jsx` file**.
+The path to `Node.js` can be acquired by:
+
+```bash
+command -v node
+```
 
 ## Credits
 

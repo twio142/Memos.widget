@@ -157,6 +157,7 @@ const inputEvent = (e) => {
 
 const keydownEvent = (e) => {
     if (e.key === 'Escape') {
+        e.preventDefault();
         e.target.blur();
     } else if (e.key === 'n' && e.metaKey) {
         e.preventDefault();

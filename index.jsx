@@ -289,11 +289,10 @@ const MemoWrapper = ({state, dispatch}) => {
 
 export const render = ({output, error}, dispatch) => {
     output = JSON.parse(output || '{}');
-    window.addEventListener('resize', (e) => {});
     return (
         <div id="MemoBoard">
         {
-            Object.keys(output).map(key => {
+            Object.keys(output)?.map(key => {
                 let {size, position, text} = output[key];
                 let {top, left} = position;
                 let {width, height} = size;

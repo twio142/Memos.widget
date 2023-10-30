@@ -18,6 +18,9 @@ node Memos.widget/lib/actions.js new [TEXT]
 # list all memos
 node Memos.widget/lib/actions.js list
 
+# print a memo
+node Memos.widget/lib/actions.js print [MEMO_ID]
+
 # Edit a memo
 node Memos.widget/lib/actions.js edit [MEMO_ID] [TEXT]
 

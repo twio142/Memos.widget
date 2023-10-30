@@ -14,7 +14,7 @@ export const init = () => {
 export const command = `cat ${dataFile}`;
 export const refreshFrequency = 864e5;
 const STATIC_INDEX = 99998;
-const ops = {passiv: !1, useCapture: !1};
+const ops = {passiv: !1, capture: !1};
 let memo, initPos = {};
 
 export const className = `
@@ -38,7 +38,7 @@ const Memo = styled('div')`
     position: absolute;
     background-color: rgb(var(--bg));
     min-width: 80px;
-    min-height: 80px;
+    min-height: 60px;
     border: 1px solid rgb(var(--fg));
     user-select: none;
     top: ${prop => prop.top}px;
@@ -249,12 +249,8 @@ const handleResizeMouseUp = (e) => {
 const closeEvent = (e) =>
     run('osascript -l JavaScript ./Memos.widget/lib/confirm.scpt').then(answer => {
         if (answer.trim() === 'OK') {
-            let memo = e.target.parentNode;
-            memo.parentNode.removeChild(memo);
-            readData().then(data => {
-                delete data[memo.getAttribute('data-id')];
-                writeData(data);
-            });
+            let mID = e.target.parentNode.getAttribute('data-id');
+            run(`"${node}" Memos.widget/lib/actions.js delete ${mID}`);
         }
     });
 
@@ -262,19 +258,31 @@ const MemoWrapper = ({state, dispatch}) => {
     const {position: {top, left}, size: {width, height}, key, text} = state;
     const dragRef = useRef(null), closeRef = useRef(null), resizeRef = useRef(null), textareaRef = useRef(null);
     useEffect(() => {
+        const textarea = textareaRef.current, drag = dragRef.current, close = closeRef.current, resize = resizeRef.current;
         if (text)
-            textareaRef.current.value = text;
-        textareaRef.current.addEventListener('focus', (e) => {
+            textarea.value = text;
+        const focusEvent = (e) => {
             e.target.classList.add('active');
             decreaseAllMemoIndexes(key);
             e.target.parentNode.style.zIndex = STATIC_INDEX;
-        });
-        textareaRef.current.addEventListener('input', inputEvent, ops);
-        textareaRef.current.addEventListener('blur', (e) => e.target.classList.remove('active'), ops);
-        textareaRef.current.addEventListener('keydown', keydownEvent);
-        dragRef.current.addEventListener('mousedown', dragEvent);
-        closeRef.current.addEventListener('mouseup', closeEvent);
-        resizeRef.current.addEventListener('mousedown', resizeEvent);
+        }
+        const blurEvent = (e) => e.target.classList.remove('active');
+        textarea.addEventListener('focus', focusEvent);
+        textarea.addEventListener('input', inputEvent, ops);
+        textarea.addEventListener('blur', blurEvent, ops);
+        textarea.addEventListener('keydown', keydownEvent);
+        drag.addEventListener('mousedown', dragEvent);
+        close.addEventListener('mouseup', closeEvent);
+        resize.addEventListener('mousedown', resizeEvent);
+        return () => {
+            textarea.removeEventListener('focus', focusEvent);
+            textarea.removeEventListener('input', inputEvent, ops);
+            textarea.removeEventListener('blur', blurEvent, ops);
+            textarea.removeEventListener('keydown', keydownEvent);
+            drag.removeEventListener('mousedown', dragEvent);
+            close.removeEventListener('mouseup', closeEvent);
+            resize.removeEventListener('mousedown', resizeEvent);
+        }
     }, []);
 
     return (

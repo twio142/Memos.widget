@@ -300,12 +300,12 @@ export const render = ({output, error}, dispatch) => {
     return (
         <div id="MemoBoard">
         {
-            Object.keys(output)?.map(key => {
+            Object.keys(output)?.map((key, x) => {
                 let {size, position, text} = output[key];
                 let {top, left} = position;
                 let {width, height} = size;
                 return (
-                    <MemoWrapper state={{size, position, text, key}} dispatch={dispatch}/>
+                    <MemoWrapper state={{size, position, text, key}} dispatch={dispatch} key={x}/>
                 )
             })
         }

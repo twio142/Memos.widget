@@ -139,7 +139,7 @@ const Resize = styled('div')`
 
 const readData = () => new Promise(resolve => run(`cat ${dataFile}`).then(data => resolve(JSON.parse(data || 'null'))));
 
-const writeData = (data) => run(`echo '${JSON.stringify(data).replaceAll("'", "'\\''")}' > ${dataFile}`);
+const writeData = (data) => run(`echo ${JSON.stringify(JSON.stringify(data))} > ${dataFile}`);
 
 const decreaseAllMemoIndexes = (key) =>
     document.querySelectorAll(`.memo:not([data-id="${key}"])`).forEach(m => m.style.zIndex = parseInt(m.style.zIndex) - 1 );

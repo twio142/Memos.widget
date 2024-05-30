@@ -18,7 +18,7 @@ const ops = {passiv: !1, capture: !1};
 let memo, initPos = {};
 
 export const className = `
-    pointer-events: none; 
+    pointer-events: none;
     width: 100%;
     height: 100%;
     #selection {

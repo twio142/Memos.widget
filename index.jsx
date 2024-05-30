@@ -2,7 +2,7 @@ import { styled, run, React } from "uebersicht";
 const { useEffect, useRef } = React;
 
 /* CONFIG */
-const node = "/usr/local/bin/node"; // node executable path
+const node = "/opt/homebrew/bin/node"; // node executable path
 
 const dataFile = "./Memos.widget/lib/data.json";
 export const init = () => {

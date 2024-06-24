@@ -1,14 +1,12 @@
 import { styled, run, React } from "uebersicht";
 const { useEffect, useRef } = React;
 
-/* CONFIG */
-const node = "/opt/homebrew/bin/node"; // node executable path
-
+const NODE="/System/Volumes/Data/Applications/Übersicht.app/Contents/Resources/localnode";
 const dataFile = "./Memos.widget/lib/data.json";
 export const init = () => {
     run(`
     sed -i '' 's/_SCREEN_SIZE_/${window.screen.availWidth}, ${window.screen.availHeight}/' Memos.widget/lib/actions.js;
-    [ -f ${dataFile} ] || "${node}" Memos.widget/lib/actions.js init
+    [ -f ${dataFile} ] || ${NODE} Memos.widget/lib/actions.js init
     `);
 }
 export const command = `cat ${dataFile}`;
@@ -161,7 +159,7 @@ const keydownEvent = (e) => {
         e.target.blur();
     } else if (e.key === 'n' && e.metaKey) {
         e.preventDefault();
-        run(`"${node}" Memos.widget/lib/actions.js new`);
+        run(`${NODE} Memos.widget/lib/actions.js new`);
     } else if (e.key === 'w' && e.metaKey) {
         e.preventDefault();
         closeEvent({target: e.target.parentNode.querySelectorAll('.close')[0]});
@@ -250,7 +248,7 @@ const closeEvent = (e) =>
     run('osascript -l JavaScript ./Memos.widget/lib/confirm.scpt').then(answer => {
         if (answer.trim() === 'OK') {
             let mID = e.target.parentNode.getAttribute('data-id');
-            run(`"${node}" Memos.widget/lib/actions.js delete ${mID}`);
+            run(`${NODE} Memos.widget/lib/actions.js delete ${mID}`);
         }
     });
 

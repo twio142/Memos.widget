@@ -40,22 +40,6 @@ Alternatively, while any existing memo has focus, you can use hotkeys to control
 
 A new memo will appear on a random position on the screen.
 
-## Dependencies
-
-This project requires `Node.js` to be installed on your machine.
-If you haven't already:
-
-```bash
-brew install node
-```
-
-After `Node.js` is installed, **enter the path to its executable in the `Memos.widget/Memos.jsx` file**.
-The path to `Node.js` can be acquired by:
-
-```bash
-command -v node
-```
-
 ## Credits
 
 This project is a Übersicht widget that was adapted from the web application [Manifest](https://github.com/jonathontoon/manifest).

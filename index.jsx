@@ -187,7 +187,7 @@ const handleDragMouseMove = (e) => {
     memo.style.left = initPos.left + deltaX + 'px';
 };
 
-const handleDragMouseUp = (e) => {
+const handleDragMouseUp = () => {
     memo.classList.remove('active');
     const drag = memo.querySelectorAll('.drag')[0];
     drag.style.cursor = 'grab';
@@ -226,7 +226,7 @@ const handleResizeMouseMove = (e) => {
     memo.style.height = initPos.height + deltaY + 'px';
 };
 
-const handleResizeMouseUp = (e) => {
+const handleResizeMouseUp = () => {
     const resize = memo.querySelector('.resize');
     resize.style.cursor = 'nw-resize';
     resize.style.backgroundColor = 'transparent';
@@ -252,9 +252,10 @@ const closeEvent = (e) =>
         }
     });
 
-const MemoWrapper = ({state, dispatch}) => {
+const MemoWrapper = ({state}) => {
     const {position: {top, left}, size: {width, height}, key, text} = state;
     const dragRef = useRef(null), closeRef = useRef(null), resizeRef = useRef(null), textareaRef = useRef(null);
+
     useEffect(() => {
         const textarea = textareaRef.current, drag = dragRef.current, close = closeRef.current, resize = resizeRef.current;
         if (text)
@@ -283,6 +284,11 @@ const MemoWrapper = ({state, dispatch}) => {
         }
     }, []);
 
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        textarea.value = text;
+    }, [text]);
+
     return (
         <Memo key={key} data-id={key} className="memo" top={top} left={left} width={width} height={height}>
             <Textarea ref={textareaRef} className="input" placeholder="Type here..." autocomplete="true"/>
@@ -293,21 +299,19 @@ const MemoWrapper = ({state, dispatch}) => {
     );
 };
 
-export const render = ({output, error}, dispatch) => {
+export const render = ({output}) => {
     output = JSON.parse(output || '{}');
     return (
         <div id="MemoBoard">
         {
             Object.keys(output)?.map((key, x) => {
                 let {size, position, text} = output[key];
-                let {top, left} = position;
-                let {width, height} = size;
                 return (
-                    <MemoWrapper state={{size, position, text, key}} dispatch={dispatch} key={x}/>
+                    <MemoWrapper state={{size, position, text, key}} key={x}/>
                 )
             })
         }
         </div>
     )
-}
+};
 

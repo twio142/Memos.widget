@@ -1,7 +1,7 @@
 import { styled, run, React } from "uebersicht";
 const { useEffect, useRef } = React;
 
-const NODE="/Applications/Übersicht.app/Contents/Resources/localnode";
+const NODE = "/Applications/Übersicht.app/Contents/Resources/localnode";
 const dataFile = "./Memos.widget/lib/data.json";
 export const init = () => {
   run(`
@@ -12,7 +12,7 @@ export const init = () => {
 export const command = `cat ${dataFile}`;
 export const refreshFrequency = 864e5;
 const STATIC_INDEX = 99998;
-const ops = {passiv: !1, capture: !1};
+const ops = { passiv: !1, capture: !1 };
 let memo, initPos = {};
 
 export const className = `
@@ -140,7 +140,7 @@ const readData = () => new Promise(resolve => run(`cat ${dataFile}`).then(data =
 const writeData = (data) => run(`echo ${JSON.stringify(JSON.stringify(data)).replaceAll('`', '\\`')} > ${dataFile}`);
 
 const decreaseAllMemoIndexes = (key) =>
-  document.querySelectorAll(`.memo:not([data-id="${key}"])`).forEach(m => m.style.zIndex = parseInt(m.style.zIndex) - 1 );
+  document.querySelectorAll(`.memo:not([data-id="${key}"])`).forEach(m => m.style.zIndex = parseInt(m.style.zIndex) - 1);
 
 const inputEvent = (e) => {
   readData().then(data => {
@@ -159,7 +159,7 @@ const keydownEvent = (e) => {
     e.target.blur();
   } else if (e.key === 'n' && e.metaKey) {
     e.preventDefault();
-    run(`${NODE} Memos.widget/lib/actions.js new; sleep 0.5`).then(id => 
+    run(`${NODE} Memos.widget/lib/actions.js new; sleep 0.5`).then(id =>
       document.querySelector(`.memo[data-id="${id.trim()}"] .input`).focus()
     );
   } else if (e.key === 'w' && e.metaKey) {
@@ -177,7 +177,7 @@ const dragEvent = (e) => {
   e.target.style.backgroundColor = 'rgba(var(--fg), .05)';
   e.target.style.cursor = 'grabbing';
   document.body.style.cursor = 'grabbing';
-  initPos = {x: e.clientX, y: e.clientY, top: memo.offsetTop, left: memo.offsetLeft};
+  initPos = { x: e.clientX, y: e.clientY, top: memo.offsetTop, left: memo.offsetLeft };
   document.addEventListener('mousemove', handleDragMouseMove, ops);
   document.addEventListener('mouseup', handleDragMouseUp, ops);
 };
@@ -202,7 +202,7 @@ const handleDragMouseUp = () => {
     let key = memo.getAttribute('data-id');
     data[key] = {
       ...data[key],
-      position: {left: memo.offsetLeft, top: memo.offsetTop},
+      position: { left: memo.offsetLeft, top: memo.offsetTop },
     };
     writeData(data);
   });
@@ -215,7 +215,7 @@ const resizeEvent = (e) => {
   memo.style.zIndex = STATIC_INDEX;
   memo.querySelectorAll('.input')[0].blur();
   e.target.style.backgroundColor = 'rgba(var(--fg), .05)';
-  initPos = {x: e.clientX, y: e.clientY, width: memo.offsetWidth, height: memo.offsetHeight};
+  initPos = { x: e.clientX, y: e.clientY, width: memo.offsetWidth, height: memo.offsetHeight };
   document.body.style.cursor = 'nw-resize';
   document.addEventListener('mousemove', handleResizeMouseMove, ops);
   document.addEventListener('mouseup', handleResizeMouseUp, ops);
@@ -240,22 +240,19 @@ const handleResizeMouseUp = () => {
     let key = memo.getAttribute('data-id');
     data[key] = {
       ...data[key],
-      size: {width: memo.offsetWidth, height: memo.offsetHeight},
+      size: { width: memo.offsetWidth, height: memo.offsetHeight },
     };
     writeData(data);
   });
 };
 
-const closeEvent = (e) =>
-  run('osascript -l JavaScript ./Memos.widget/lib/confirm.scpt').then(answer => {
-    if (answer.trim() === 'OK') {
-      let mID = e.target.parentNode.getAttribute('data-id');
-      run(`${NODE} Memos.widget/lib/actions.js delete ${mID}; sleep 0.5; touch Memos.widget/index.jsx`);
-    }
-  });
+const closeEvent = (e) => {
+  const mID = e.target.parentNode.getAttribute('data-id');
+  run(`osascript -e 'display dialog "Delete this memo?" buttons {"Cancel", "OK"} default button "OK" cancel button "Cancel" with icon stop' 2>/dev/null && { ${NODE} Memos.widget/lib/actions.js delete ${mID}; sleep 0.5; touch Memos.widget/index.jsx; }`);
+}
 
-const MemoWrapper = ({state}) => {
-  const {position: {top, left}, size: {width, height}, key, text} = state;
+const MemoWrapper = ({ state }) => {
+  const { position: { top, left }, size: { width, height }, key, text } = state;
   const dragRef = useRef(null), closeRef = useRef(null), resizeRef = useRef(null), textareaRef = useRef(null);
 
   useEffect(() => {
@@ -293,26 +290,26 @@ const MemoWrapper = ({state}) => {
 
   return (
     <Memo key={key} data-id={key} className="memo" top={top} left={left} width={width} height={height}>
-      <Textarea ref={textareaRef} className="input" placeholder="Type here..." autocomplete="true"/>
-      <Drag ref={dragRef} className="drag"/>
+      <Textarea ref={textareaRef} className="input" placeholder="Type here..." autocomplete="true" />
+      <Drag ref={dragRef} className="drag" />
       <Close ref={closeRef} className="close">–</Close>
-      <Resize ref={resizeRef} className="resize"/>
+      <Resize ref={resizeRef} className="resize" />
     </Memo>
   );
 };
 
-export const render = ({output}) => {
+export const render = ({ output }) => {
   output = JSON.parse(output || '{}');
   return (
     <div id="MemoBoard">
-    {
-      Object.keys(output)?.map((key, x) => {
-        let {size, position, text} = output[key];
-        return (
-          <MemoWrapper state={{size, position, text, key}} key={x}/>
-        )
-      })
-    }
+      {
+        Object.keys(output)?.map((key, x) => {
+          let { size, position, text } = output[key];
+          return (
+            <MemoWrapper state={{ size, position, text, key }} key={x} />
+          )
+        })
+      }
     </div>
   )
 };

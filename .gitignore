@@ -1,3 +1,4 @@
 .*
 lib/data.json
+lib/screen.js
 build

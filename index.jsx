@@ -4,11 +4,9 @@ const { useEffect, useRef } = React;
 const NODE = "/Applications/Übersicht.app/Contents/Resources/localnode";
 const dataFile = "./Memos.widget/lib/data.json";
 export const init = () => {
-  run(`
-  sed -i '' 's/_SCREEN_SIZE_/${window.screen.availWidth}, ${window.screen.availHeight}/' Memos.widget/lib/actions.js;
-  [ -f ${dataFile} ] || ${NODE} Memos.widget/lib/actions.js init
-  `);
-}
+  const template = `module.exports = {w: ${window.screen.availWidth}, h: ${window.screen.availHeight}};`;
+  run(`echo "${template}" > Memos.widget/lib/screen.js; ${NODE} Memos.widget/lib/actions.js init`);
+};
 export const command = `cat ${dataFile}`;
 export const refreshFrequency = 864e5;
 const STATIC_INDEX = 99998;

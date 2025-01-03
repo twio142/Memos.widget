@@ -1,0 +1,27 @@
+name: Create Release on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Create ZIP of Repository
+        run: git archive -o ${{ github.event.repository.name }}.zip HEAD
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        with:
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: ${{ github.event.repository.name }}.zip

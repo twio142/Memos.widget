@@ -1,18 +1,19 @@
-import { styled, run, React } from 'uebersicht';
+import { React, run, styled } from 'uebersicht';
+
 const { useEffect, useRef } = React;
 
 const NODE = '/Applications/Übersicht.app/Contents/Resources/localnode';
 const dataFile = './Memos.widget/lib/data.json';
-export const init = () => {
+export function init() {
   const template = `module.exports = {w: ${window.screen.availWidth}, h: ${window.screen.availHeight}};`;
   run(`echo "${template}" > Memos.widget/lib/screen.js; ${NODE} Memos.widget/lib/actions.js init`);
-};
+}
 export const command = `cat ${dataFile}`;
 export const refreshFrequency = 864e5;
 const STATIC_INDEX = 99998;
 const ops = { passiv: !1, capture: !1 };
-let memo,
-  initPos = {};
+let memo;
+let initPos = {};
 
 export const className = `
   pointer-events: none;
@@ -38,10 +39,10 @@ const Memo = styled('div')`
   min-height: 60px;
   border: 1px solid rgb(var(--fg));
   user-select: none;
-  top: ${(prop) => prop.top}px;
-  left: ${(prop) => prop.left}px;
-  width: ${(prop) => prop.width}px;
-  height: ${(prop) => prop.height}px;
+  top: ${prop => prop.top}px;
+  left: ${prop => prop.left}px;
+  width: ${prop => prop.width}px;
+  height: ${prop => prop.height}px;
   z-index: ${STATIC_INDEX};
   &.active {
     user-select: auto;
@@ -136,43 +137,45 @@ const Resize = styled('div')`
   border-left: 1px solid rgb(var(--fg));
 `;
 
-const readData = () =>
-  new Promise((resolve) => run(`cat ${dataFile}`).then((data) => resolve(JSON.parse(data || 'null'))));
+function readData() {
+  return new Promise(resolve => run(`cat ${dataFile}`).then(data => resolve(JSON.parse(data || 'null'))))
+}
 
-const writeData = (data) => run(`echo ${JSON.stringify(JSON.stringify(data)).replaceAll('`', '\\`')} > ${dataFile}`);
+const writeData = data => run(`echo ${JSON.stringify(JSON.stringify(data)).replaceAll('`', '\\`')} > ${dataFile}`);
 
-const decreaseAllMemoIndexes = (key) =>
-  document
+function decreaseAllMemoIndexes(key) {
+  return document
     .querySelectorAll(`.memo:not([data-id="${key}"])`)
-    .forEach((m) => (m.style.zIndex = parseInt(m.style.zIndex) - 1));
+    .forEach(m => (m.style.zIndex = Number.parseInt(m.style.zIndex) - 1))
+}
 
-const inputEvent = (e) => {
+function inputEvent(e) {
   readData().then((data) => {
-    let key = e.target.parentNode.getAttribute('data-id');
+    const key = e.target.parentNode.getAttribute('data-id');
     data[key] = {
       ...data[key],
-      text: e.target.value
+      text: e.target.value,
     };
     writeData(data);
   });
-};
+}
 
-const keydownEvent = (e) => {
+function keydownEvent(e) {
   if (e.key === 'Escape') {
     e.preventDefault();
     e.target.blur();
   } else if (e.key === 'n' && e.metaKey) {
     e.preventDefault();
-    run(`${NODE} Memos.widget/lib/actions.js new; sleep 0.5`).then((id) =>
-      document.querySelector(`.memo[data-id="${id.trim()}"] .input`).focus()
+    run(`${NODE} Memos.widget/lib/actions.js new; sleep 0.5`).then(id =>
+      document.querySelector(`.memo[data-id="${id.trim()}"] .input`).focus(),
     );
   } else if (e.key === 'w' && e.metaKey) {
     e.preventDefault();
     closeEvent(e);
   }
-};
+}
 
-const dragEvent = (e) => {
+function dragEvent(e) {
   decreaseAllMemoIndexes(e.target.getAttribute('data-id'));
   memo = e.target.parentNode;
   memo.classList.add('active');
@@ -184,17 +187,18 @@ const dragEvent = (e) => {
   initPos = { x: e.clientX, y: e.clientY, top: memo.offsetTop, left: memo.offsetLeft };
   document.addEventListener('mousemove', handleDragMouseMove, ops);
   document.addEventListener('mouseup', handleDragMouseUp, ops);
-};
+}
 
-const handleDragMouseMove = (e) => {
-  if (!memo.classList.contains('active')) return;
-  const deltaX = e.clientX - initPos.x,
-    deltaY = e.clientY - initPos.y;
-  memo.style.top = initPos.top + deltaY + 'px';
-  memo.style.left = initPos.left + deltaX + 'px';
-};
+function handleDragMouseMove(e) {
+  if (!memo.classList.contains('active'))
+    return;
+  const deltaX = e.clientX - initPos.x;
+  const deltaY = e.clientY - initPos.y;
+  memo.style.top = `${initPos.top + deltaY}px`;
+  memo.style.left = `${initPos.left + deltaX}px`;
+}
 
-const handleDragMouseUp = () => {
+function handleDragMouseUp() {
   memo.classList.remove('active');
   const drag = memo.querySelectorAll('.drag')[0];
   drag.style.cursor = 'grab';
@@ -204,16 +208,16 @@ const handleDragMouseUp = () => {
   document.removeEventListener('mousemove', handleDragMouseMove);
   document.removeEventListener('mouseup', handleDragMouseUp);
   readData().then((data) => {
-    let key = memo.getAttribute('data-id');
+    const key = memo.getAttribute('data-id');
     data[key] = {
       ...data[key],
-      position: { left: memo.offsetLeft, top: memo.offsetTop }
+      position: { left: memo.offsetLeft, top: memo.offsetTop },
     };
     writeData(data);
   });
-};
+}
 
-const resizeEvent = (e) => {
+function resizeEvent(e) {
   decreaseAllMemoIndexes(e.target.getAttribute('data-id'));
   memo = e.target.parentNode;
   memo.classList.add('active');
@@ -224,17 +228,18 @@ const resizeEvent = (e) => {
   document.body.style.cursor = 'nw-resize';
   document.addEventListener('mousemove', handleResizeMouseMove, ops);
   document.addEventListener('mouseup', handleResizeMouseUp, ops);
-};
+}
 
-const handleResizeMouseMove = (e) => {
-  if (!memo.classList.contains('active')) return;
-  const deltaX = e.clientX - initPos.x,
-    deltaY = e.clientY - initPos.y;
-  memo.style.width = initPos.width + deltaX + 'px';
-  memo.style.height = initPos.height + deltaY + 'px';
-};
+function handleResizeMouseMove(e) {
+  if (!memo.classList.contains('active'))
+    return;
+  const deltaX = e.clientX - initPos.x;
+  const deltaY = e.clientY - initPos.y;
+  memo.style.width = `${initPos.width + deltaX}px`;
+  memo.style.height = `${initPos.height + deltaY}px`;
+}
 
-const handleResizeMouseUp = () => {
+function handleResizeMouseUp() {
   const resize = memo.querySelector('.resize');
   resize.style.cursor = 'nw-resize';
   resize.style.backgroundColor = 'transparent';
@@ -243,46 +248,47 @@ const handleResizeMouseUp = () => {
   document.removeEventListener('mousemove', handleResizeMouseMove, ops);
   document.removeEventListener('mouseup', handleResizeMouseUp, ops);
   readData().then((data) => {
-    let key = memo.getAttribute('data-id');
+    const key = memo.getAttribute('data-id');
     data[key] = {
       ...data[key],
-      size: { width: memo.offsetWidth, height: memo.offsetHeight }
+      size: { width: memo.offsetWidth, height: memo.offsetHeight },
     };
     writeData(data);
   });
-};
+}
 
-const closeEvent = (e) => {
+function closeEvent(e) {
   const mID = e.target.parentNode.getAttribute('data-id');
   run(
-    `osascript -e 'display dialog "Delete this memo?" buttons {"Cancel", "OK"} default button "OK" cancel button "Cancel" with icon stop' 2>/dev/null && { ${NODE} Memos.widget/lib/actions.js delete ${mID}; sleep 0.5; touch Memos.widget/index.jsx; }`
+    `osascript -e 'display dialog "Delete this memo?" buttons {"Cancel", "OK"} default button "OK" cancel button "Cancel" with icon stop' 2>/dev/null && { ${NODE} Memos.widget/lib/actions.js delete ${mID}; sleep 0.5; touch Memos.widget/index.jsx; }`,
   );
-};
+}
 
-const MemoWrapper = ({ state }) => {
+function MemoWrapper({ state }) {
   const {
     position: { top, left },
     size: { width, height },
     key,
-    text
+    text,
   } = state;
-  const dragRef = useRef(null),
-    closeRef = useRef(null),
-    resizeRef = useRef(null),
-    textareaRef = useRef(null);
+  const dragRef = useRef(null);
+  const closeRef = useRef(null);
+  const resizeRef = useRef(null);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
-    const textarea = textareaRef.current,
-      drag = dragRef.current,
-      close = closeRef.current,
-      resize = resizeRef.current;
-    if (text) textarea.value = text;
+    const textarea = textareaRef.current;
+    const drag = dragRef.current;
+    const close = closeRef.current;
+    const resize = resizeRef.current;
+    if (text)
+      textarea.value = text;
     const focusEvent = (e) => {
       e.target.classList.add('active');
       decreaseAllMemoIndexes(key);
       e.target.parentNode.style.zIndex = STATIC_INDEX;
     };
-    const blurEvent = (e) => e.target.classList.remove('active');
+    const blurEvent = e => e.target.classList.remove('active');
     textarea.addEventListener('focus', focusEvent);
     textarea.addEventListener('input', inputEvent, ops);
     textarea.addEventListener('blur', blurEvent, ops);
@@ -299,7 +305,7 @@ const MemoWrapper = ({ state }) => {
       close.removeEventListener('mouseup', closeEvent);
       resize.removeEventListener('mousedown', resizeEvent);
     };
-  }, []);
+  }, [text, key]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -316,16 +322,16 @@ const MemoWrapper = ({ state }) => {
       <Resize ref={resizeRef} className="resize" />
     </Memo>
   );
-};
+}
 
-export const render = ({ output }) => {
+export function render({ output }) {
   output = JSON.parse(output || '{}');
   return (
     <div id="MemoBoard">
-      {Object.keys(output)?.map((key, x) => {
-        let { size, position, text } = output[key];
-        return <MemoWrapper state={{ size, position, text, key }} key={x} />;
+      {Object.keys(output)?.map((key) => {
+        const { size, position, text } = output[key];
+        return <MemoWrapper state={{ size, position, text, key }} key={key} />;
       })}
     </div>
   );
-};
+}

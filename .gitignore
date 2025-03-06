@@ -1,4 +1,4 @@
 .DS_Store
 lib/data.json
-lib/screen.js
+lib/screen.cjs
 build

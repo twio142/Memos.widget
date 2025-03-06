@@ -2,13 +2,15 @@ import { React, run, styled } from 'uebersicht';
 
 const { useEffect, useRef } = React;
 
+const widgetDir = 'Memos.widget';
 const NODE = '/Applications/Übersicht.app/Contents/Resources/localnode';
-const dataFile = './Memos.widget/lib/data.json';
+const exec = `"${NODE}" "${widgetDir}/lib/actions.cjs"`;
+const dataFile = `${widgetDir}/lib/data.json`;
 export function init() {
   const template = `module.exports = {w: ${window.screen.availWidth}, h: ${window.screen.availHeight}};`;
-  run(`echo "${template}" > Memos.widget/lib/screen.js; ${NODE} Memos.widget/lib/actions.js init`);
+  run(`echo "${template}" > "${widgetDir}/lib/screen.cjs"; ${exec} init`);
 }
-export const command = `cat ${dataFile}`;
+export const command = `cat "${dataFile}"`;
 export const refreshFrequency = 864e5;
 const STATIC_INDEX = 99998;
 const ops = { passiv: !1, capture: !1 };
@@ -138,15 +140,15 @@ const Resize = styled('div')`
 `;
 
 function readData() {
-  return new Promise(resolve => run(`cat ${dataFile}`).then(data => resolve(JSON.parse(data || 'null'))))
+  return new Promise(resolve => run(`cat "${dataFile}"`).then(data => resolve(JSON.parse(data || 'null'))));
 }
 
-const writeData = data => run(`echo ${JSON.stringify(JSON.stringify(data)).replaceAll('`', '\\`')} > ${dataFile}`);
+const writeData = data => run(`echo ${JSON.stringify(JSON.stringify(data)).replaceAll('`', '\\`')} > "${dataFile}"`);
 
 function decreaseAllMemoIndexes(key) {
   return document
     .querySelectorAll(`.memo:not([data-id="${key}"])`)
-    .forEach(m => (m.style.zIndex = Number.parseInt(m.style.zIndex) - 1))
+    .forEach(m => (m.style.zIndex = Number.parseInt(m.style.zIndex) - 1));
 }
 
 function inputEvent(e) {
@@ -166,7 +168,7 @@ function keydownEvent(e) {
     e.target.blur();
   } else if (e.key === 'n' && e.metaKey) {
     e.preventDefault();
-    run(`${NODE} Memos.widget/lib/actions.js new; sleep 0.5`).then(id =>
+    run(`${exec} new; sleep 0.5`).then(id =>
       document.querySelector(`.memo[data-id="${id.trim()}"] .input`).focus(),
     );
   } else if (e.key === 'w' && e.metaKey) {
@@ -260,7 +262,7 @@ function handleResizeMouseUp() {
 function closeEvent(e) {
   const mID = e.target.parentNode.getAttribute('data-id');
   run(
-    `osascript -e 'display dialog "Delete this memo?" buttons {"Cancel", "OK"} default button "OK" cancel button "Cancel" with icon stop' 2>/dev/null && { ${NODE} Memos.widget/lib/actions.js delete ${mID}; sleep 0.5; touch Memos.widget/index.jsx; }`,
+    `osascript -e 'display dialog "Delete this memo?" buttons {"Cancel", "OK"} default button "OK" cancel button "Cancel" with icon stop' 2>/dev/null && { ${exec} delete ${mID}; sleep 0.5; touch ${widgetDir}/index.jsx; }`,
   );
 }
 

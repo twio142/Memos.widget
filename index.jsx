@@ -4,11 +4,11 @@ const { useEffect, useRef } = React;
 
 const widgetDir = 'Memos.widget';
 const NODE = '/Applications/Übersicht.app/Contents/Resources/localnode';
-const exec = `"${NODE}" "${widgetDir}/lib/actions.cjs"`;
+const exec = `"${NODE}" "${widgetDir}/lib/actions.mjs"`;
 const dataFile = `${widgetDir}/lib/data.json`;
 export function init() {
-  const template = `module.exports = {w: ${window.screen.availWidth}, h: ${window.screen.availHeight}};`;
-  run(`echo "${template}" > "${widgetDir}/lib/screen.cjs"; ${exec} init`);
+  const template = `export const w = ${window.screen.availWidth};\nexport const h = ${window.screen.availHeight};`;
+  run(`echo "${template}" > "${widgetDir}/lib/screen.mjs"; ${exec} init`);
 }
 export const command = `cat "${dataFile}"`;
 export const refreshFrequency = 864e5;

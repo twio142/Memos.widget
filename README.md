@@ -9,26 +9,26 @@ It allows you to keep memos on your desktop.
 
 Each memo can be edited in place, dragged around or resized.
 
-The `Memos.widget/lib/actions.js` file allows you to create, edit or delete your memos.
+The `Memos.widget/lib/actions.mjs` file allows you to create, edit or delete your memos.
 
 ```bash
 # Create a new memo
-node Memos.widget/lib/actions.js new [TEXT]
+node Memos.widget/lib/actions.mjs new [TEXT]
 
 # list all memos
-node Memos.widget/lib/actions.js list
+node Memos.widget/lib/actions.mjs list
 
 # print a memo
-node Memos.widget/lib/actions.js print [MEMO_ID]
+node Memos.widget/lib/actions.mjs print [MEMO_ID]
 
 # Edit a memo
-node Memos.widget/lib/actions.js edit [MEMO_ID] [TEXT]
+node Memos.widget/lib/actions.mjs edit [MEMO_ID] [TEXT]
 
 # Append text to a memo
-node Memos.widget/lib/actions.js append [MEMO_ID] [TEXT]
+node Memos.widget/lib/actions.mjs append [MEMO_ID] [TEXT]
 
 # Delete a memo
-node Memos.widget/lib/actions.js delete [MEMO_ID]
+node Memos.widget/lib/actions.mjs delete [MEMO_ID]
 ```
 
 Alternatively, while any existing memo has focus, you can use hotkeys to control your memos.

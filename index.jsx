@@ -54,7 +54,6 @@ const Memo = styled('div')`
   &.active .close,
   &.active textarea {
     user-select: none !important;
-    -webkit-user-select: none !important;
   }
 `;
 
@@ -77,8 +76,8 @@ const Textarea = styled('textarea')`
   cursor: text;
   background: rgb(var(--bg));
   color: rgb(var(--fg));
-  scrollbar-color: rgb(var(--fg)) transparent;
-  scrollbar-width: thin;
+  /* scrollbar-color: rgb(var(--fg)) transparent;
+  scrollbar-width: thin; */
   &::-webkit-scrollbar {
     width: 1px;
     height: 6px;
